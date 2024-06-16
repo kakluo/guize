@@ -1,0 +1,177 @@
+[General]
+#false表示关闭，true表示开启
+# 自定义Geoip数据库的URL
+geoip-url = https://github.com/Masaiki/GeoIP2-CN/raw/release/Country.mmdb
+# IPv6开关
+ipv6 = false
+# DNS服务，system表示系统自带dns服务器
+dns-server = 223.5.5.5,114.114.114.114,119.29.29.29
+# 是否允许wifi下共享网络
+allow-wifi-access = false
+# 网络共享MITM开关
+mitm-on-wifi-access = false
+# wifi共享开启时http服务的端口
+wifi-access-http-port = 7890
+# wifi共享开启时socks5服务的端口
+wifi-access-socks5-port = 7890
+# 代理延迟测速
+proxy-test-url = http://www.google.com/generate_204
+# 节点测速时的超时秒数
+test-timeout = 2
+# 一个节点连接失败几次后会进行节点切换，默认3次
+switch-node-after-failure-times = 3
+# 网络接口
+interface-mode = auto
+# 真实IP
+real-ip = *.apple.com,*apple.com
+# 策略切换时关闭连接
+disconnect-on-policy-change = false
+# 屏蔽443UDP端口
+disable-udp-ports = 443
+# 禁止STUN
+disable-stun = false
+# SNI辅助规则匹配
+sni-sniffing = true
+# 订阅资源解析器链接
+resource-parser = https://gitlab.com/sub-store/Sub-Store/-/releases/permalink/latest/downloads/sub-store-parser.loon.min.js
+# skip-proxy和HTTP Proxy有关，如果配置了该参数，那么所配置的这些IP段、域名将不会转发到Loon，而是由系统处理
+skip-proxy = 192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,localhost,*.local,e.crashlynatics.com
+# 目前iOS设备上的流量有两种方式传递给Loon，分别是HTTP Proxy和TUN（可以简单理解为虚拟网卡），bypass-tun则和TUN有关，如果配置了该参数，那么所配置的这些IP段、域名就会不交给Loon来处理，系统直接处理
+bypass-tun = 10.0.0.0/8,100.64.0.0/10,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,192.0.2.0/24,192.88.99.0/24,192.168.0.0/16,198.51.100.0/24,203.0.113.0/24,224.0.0.0/4,255.255.255.255/32
+[Proxy]
+
+[Remote Proxy]
+
+[Remote Filter]
+All = NameRegex, FilterKey = "^(.)*$"
+
+HK = NameRegex, FilterKey = "(?=.*(🇭🇰|香港|HK|(?i)Hong))^((?!(台|日|韩|新|美)).)*$"
+
+TW = NameRegex, FilterKey = "(?=.*(🇹🇼|台湾|TW|(?i)Taiwan))^((?!(港|日|韩|新|美)).)*$"
+
+JP = NameRegex, FilterKey = "(?=.*(🇯🇵|日本|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$"
+
+US = NameRegex, FilterKey = "(?=.*(🇺🇸|美国|(\bUS\b/i)|(?i)States|American))^((?!(港|台|韩|新)).)*$"
+
+SG = NameRegex, FilterKey = "(?=.*(🇸🇬|新加坡|SG|(?i)Singapore))^((?!(港|台|日|韩|美)).)*$"
+
+KR = NameRegex, FilterKey = "(?=.*(🇰🇷|韩国|KR|(?i)SouthKorea))^((?!(港|台|日|新|美)).)*$"
+
+AI = NameRegex, FilterKey = "(?=.*(电信|联通|哥伦比亚|白嫖|越南|澳|印度|泰国|澳大利亚|土耳其|马来西亚|法国|荷兰|意大利|阿根廷|德国|加拿大|迪拜|阿布扎比|悉尼|菲律宾|耶路撒冷|南非|智利|巴西|瑞士|以色列|🇹🇷|🇦🇺|🇫🇷|🇮🇹|🇦🇷|🇨🇦|🇮🇳|🇵🇱|🇮🇱|🇮🇸|TUR|AUS|IND|FRA|ARE|NLD|ITA|ISR|CHE|GBR|ZAF))^((?!(港|台|日|韩|新)).)*$"
+
+[Proxy Group]
+PROXY = select,香港节点,台湾节点,日本节点,狮城节点,美国节点,韩国节点,其他节点,All,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Proxy.png
+全部节点 = select,DIRECT,PROXY,All,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Loon_02.png
+bilibili = select,DIRECT,香港节点,台湾节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Bili.png
+Game = select,DIRECT,PROXY,自动选择,香港节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/GAME.png
+Telegram = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Telegram.png
+Twitter = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Twitter.png
+lnstagram = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Instagram.png
+谷歌服务 = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Google_Search.png
+苹果服务 = select,DIRECT,PROXY,香港节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Apple.png
+国际媒体 = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Streaming.png
+全球加速 = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Global.png
+兜底分流 = select,DIRECT,PROXY,自动选择,香港节点,台湾节点,日本节点,狮城节点,美国节点,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/Final.png
+自动选择 = url-test,All,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Auto.png
+香港节点 = url-test,HK,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/HK.png
+台湾节点 = url-test,TW,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/TW.png
+日本节点 = url-test,JP,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/JP.png
+狮城节点 = url-test,SG,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/SG.png
+美国节点 = url-test,US,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/US.png
+韩国节点 = url-test,KR,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/KR.png
+其他节点 = url-test,AI,url = http://www.google.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Color/XD.png
+[Proxy Chain]
+[Rule]
+FINAL,兜底分流
+[Remote Rule]
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Quantumult/Filter/Unbreak.list, policy=DIRECT, tag=规则修正, enabled=true
+https://adrules.top/adrules.list, policy=REJECT, tag=adrules.list, enabled=false
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/AdvertisingPlus.list#type=domain-set, policy=REJECT, tag=广告拦截, enabled=true
+https://raw.githubusercontent.com/NobyDa/Script/master/Surge/AdRule.list, policy=REJECT, tag=广告拦截, enabled=true
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Advertising.list, policy=REJECT, tag=广告拦截, enabled=true
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Hijacking.list, policy=REJECT, tag=运营劫持, enabled=true
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Privacy.list, policy=REJECT, tag=隐私劫持, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/WeChat/WeChat.list, policy=DIRECT, tag=微信转圈, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/Speedtest/Speedtest.list, policy=全部节点, tag=Speedtest, enabled=true
+https://raw.githubusercontent.com/ddgksf2013/Filter/master/Emby.list, policy=兜底分流, tag=Emby, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/CMSPlayer.list, policy=兜底分流, tag=CMSPlayer, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Bilibili.list, policy=bilibili, tag=Bilibli, enabled=true
+https://gitlab.com/lodepuly/proxy_tool_resources/-/raw/master/rule/Loon/TikTok/TikTok.list, policy=PROXY, tag=TikTok, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/GitLab/GitLab.list, policy=美国节点, tag=GitLab, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Github.list, policy=美国节点, tag=Github, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/Game/Game.list, policy=Game, tag=Game, enabled=true
+https://raw.githubusercontent.com/Repcz/Tool/X/Loon/Rules/Telegram.list, policy=Telegram, tag=Telegram, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/Instagram.list, policy=lnstagram, tag=Instagram, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list, policy=谷歌服务, tag=YouTube, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTubeMusic.list, policy=谷歌服务, tag=YouTubeMusic, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/Google/Google.list, policy=谷歌服务, tag=Google, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AppleMusic/AppleMusic.list, policy=兜底分流, tag=AppleMusic, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Spotify.list, policy=狮城节点, tag=Spotify, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Twitter.list, policy=Twitter, tag=Twitter, enabled=true
+https://raw.githubusercontent.com/Repcz/Tool/X/Loon/Rules/OpenAI.list, policy=PROXY, tag=OpenAI, enabled=true
+https://raw.githubusercontent.com/Repcz/Tool/X/Loon/Rules/ChatGPT_Voice.list, policy=PROXY, tag=ChatGPT_Voice, enabled=true
+https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Microsoft.list, policy=美国节点, tag=微软服务, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/Softwareupdate.list, policy=兜底分流, tag=系统更新, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/AppStore.list, policy=兜底分流, tag=AppStore, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/TestFlight/TestFlight.list, policy=兜底分流, tag=TestFlight, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/Streaming.list, policy=国际媒体, tag=国际媒体, enabled=true
+https://raw.githubusercontent.com/Repcz/Tool/X/Loon/Rules/Apple.list, policy=苹果服务, tag=苹果服务, parser-enable=true, enabled=true
+https://raw.githubusercontent.com/LeLeBay/Rule/main/Loon/Global.list, policy=全球加速, tag=全球加速, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/Lan/Lan.list, policy=DIRECT, tag=LAN, enabled=true
+https://raw.githubusercontent.com/missuo/ASN-China/main/ASN.China.list, policy=DIRECT, tag=ASN, enabled=true
+https://raw.githubusercontent.com/Repcz/Open-Proflies/main/QuantumultX/Rules/FILTER_REGION.snippet, policy=DIRECT, tag=CN, enabled=true
+[Host]
+*.baidu.com = server:180.76.76.76
+*.icloud.com = server:119.29.29.29
+*.icloud.com.cn = server:119.29.29.29
+*.tencent.com = server:119.29.29.29
+*.weixin.com = server:119.29.29.29
+[Rewrite]
+
+[Script]
+generic script-path=https://raw.githubusercontent.com/MCdasheng/Loon/main/Streaming/ChatGPT.js, timeout=10, tag=GPT
+generic script-path=https://raw.githubusercontent.com/MCdasheng/Loon/main/Streaming/Spotify.js, timeout=10, tag=Spotify
+[Remote Script]
+[Plugin]
+https://raw.githubusercontent.com/zqzess/rule_for_quantumultX/master/Loon/Plugin/ReFix.plugin, policy=DIRECT, enabled=true
+https://raw.githubusercontent.com/LeLeBay/rewrite/main/Loon/ONE.plugin, enabled=true
+https://raw.githubusercontent.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.loon.plugin, policy=兜底分流, enabled=true
+https://raw.githubusercontent.com/sub-store-org/Sub-Store/master/config/Loon.plugin, policy=兜底分流, enabled=true
+https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/modules/script-hub.loon.plugin, policy=兜底分流, tag=Script Hub(β): 重写 & 规则集转换, enabled=true
+https://raw.githubusercontent.com/Keywos/rule/main/loon/YouTubeFY.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/YouTube_remove_ads.plugin, enabled=true
+https://whatshub.top/plugin/SpotifyPremium.plugin, enabled=true
+http://script.hub/file/_start_/https://raw.githubusercontent.com/RuCu6/QuanX/main/Rewrites/Cube/bilibili.snippet/_end_/bilibili.plugin?type=qx-rewrite&target=loon-plugin&del=true, enabled=true
+https://raw.githubusercontent.com/LeLeBay/rewrite/main/Loon/Google.plugin, enabled=false
+https://raw.githubusercontent.com/NobyDa/Script/master/Loon/Loon_IPA_Installer.plugin, enabled=true
+https://raw.githubusercontent.com/zqzess/rule_for_quantumultX/master/Loon/Plugin/Qsearch.plugin, tag=快捷搜索, enabled=true
+https://raw.githubusercontent.com/Keywos/rule/main/script/baidu_index/bd.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BaiduNetDisk_remove_ads.plugin, enabled=true
+http://script.hub/file/_start_/https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/Weibo.conf/_end_/Weibo.plugin?type=qx-rewrite&target=loon-plugin&del=true, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Tieba_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/CoolApk_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Zhihu_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Cainiao_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/RedPaper_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/IThome_remove_ads.plugin, enabled=true
+https://whatshub.top/plugin/wechatad.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/QQMusic_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Himalaya_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/NeteaseCloudMusic_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Amap_remove_ads.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/smzdm_remove_ads.plugin, enabled=true
+http://script.hub/file/_start_/https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/rewrite/boxJS/XiaoMaoALiCloud.js/_end_/XiaoMaoALiCloud.plugin?n=%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98&type=qx-rewrite&target=loon-plugin&del=true, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Remove_ads_by_keli.plugin, enabled=false
+https://raw.githubusercontent.com/GeQ1an/Rules/master/Loon/Rewrite/Rewrite.plugin, enabled=true
+https://whatshub.top/plugin/startingad.plugin, enabled=false
+http://script.hub/file/_start_/https://raw.githubusercontent.com/ddgksf2013/Rewrite/master/AdBlock/StartUp.conf/_end_/StartUp.plugin?type=qx-rewrite&target=loon-plugin&del=true, enabled=true
+https://raw.githubusercontent.com/Keywos/rule/main/script/netisp/netisp.plugin, enabled=true
+https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Node_detection_tool.plugin, enabled=true
+https://raw.githubusercontent.com/NobyDa/Script/master/Loon/Loon_TF_Download.plugin, enabled=true
+
+[Mitm]
+hostname = -api.revenuecat.com,-buy.itunes.apple.com,-weather-data.apple.com,auth.aliyundrive.com,auth.alipan.com
+ca-p12 = 
+ca-passphrase = 
+# 跳过验证服务器的证书
+skip-server-cert-verify = true
