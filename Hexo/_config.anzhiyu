@@ -1060,8 +1060,8 @@ css_prefix: true
 home_top:
   enable: true # 开关
   timemode: date #date/updated
-  title: 生活很苦
-  subTitle: 未来可期。
+  title: 一个小混子。
+  subTitle: 变成大混子。
   siteText: anheyu.com
   category:
     - name: 学习
@@ -1234,7 +1234,7 @@ rightClickMenu:
 
 # 首页随便逛逛people模式 而非技能点模式，关闭后为技能点模式需要配置creativity.yml
 peoplecanvas:
-  enable: true
+  enable: false
   img: https://upload-bbs.miyoushe.com/upload/2023/09/03/125766904/ee23df8517f3c3e3efc4145658269c06_5714860933110284659.png
 
 # 动效
