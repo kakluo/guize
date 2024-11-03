@@ -124,7 +124,7 @@ npm install cheerio
 
 ## 主题更改记录
 
-### 朋友圈更改记录
+> 朋友圈更改记录👇
 
 <details>
 <summary><code><strong>朋友圈更改记录</strong></code></summary>
@@ -421,7 +421,8 @@ friends_lite:
 ```
 </details>
 
-### 更改友链随机访问
+
+> 更改友链随机访问👇
 
 <details>
 <summary><code><strong>更改友链随机访问</strong></code></summary>
@@ -559,9 +560,10 @@ friends_lite:
                   span.flink-sitename.cf-friends-name= item.name
     != page.content
 ```
-<details>
+</details>
 
-### 文章统计增加
+
+> 文章统计增加👇
 
 <details>
 <summary><code><strong>文章统计增加</strong></code></summary>
@@ -1085,7 +1087,7 @@ hexo clean; hexo g; hexo s
 
 </details>
 
-### Hexo自适应切换渐进式加载首页图
+> Hexo自适应切换渐进式加载首页图👇
 
 <details>
 <summary><code><strong>Hexo自适应切换渐进式加载首页图</strong></code></summary>
@@ -1528,7 +1530,7 @@ hexo clean; hexo g; hexo s
 ```
 </details>
 
-### 快速添加友链教程
+> 快速添加友链教程👇
 
 <details>
 <summary><code><strong>快速添加友链</strong></code></summary>
@@ -1633,9 +1635,9 @@ button {
 ``` BASH
 hexo clean; hexo g; hexo s
 ```
-<details>
+</details>
 
-### 添加侧边栏小人
+> 添加侧边栏小人👇
 
 <details>
 <summary><code><strong>「添加侧边栏小人」</strong></code></summary>
