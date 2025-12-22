@@ -1,0 +1,222 @@
+/**
+ * =================================================================================
+ *              Cloudflare Worker 通用 Emby 反向代理脚本 (带 D1 统计版)
+ * =================================================================================
+ *
+ * 版本: 2.5
+ * 更新日志:
+ * - 集成 D1 数据库统计功能
+ * - 统计播放次数与获取链接次数
+ * - 统计日期强制使用北京时间 (UTC+8)
+ *
+ */
+
+
+const MANUAL_REDIRECT_DOMAINS = [
+    'ap-cn01.emby.bangumi.ca',
+    'ap-cn02.emby.bangumi.ca',
+    'ap-cn03.emby.bangumi.ca',
+    'quark.cn', //夸克网盘
+    'mini189.cn', //天翼云盘
+    '189.cn', //天翼云盘
+    'ctyunxs.cn', //天翼云盘
+    'telecomjs.com', //天翼云盘
+    'xunlei.com', //迅雷云盘
+    '115.com', //115
+    '115cdn.com', //115
+    '115cdn.net', //115
+    'uc.cn', //uc
+    'aliyundrive.com', //阿里
+    'aliyundrive.net', //阿里
+    'voicehub.top', //阿里
+    'xiaoya.pro', //小雅
+];
+
+
+// 被封锁的EMBY，走美西
+const DOMAIN_PROXY_RULES = {
+  // 格式：'域名后缀': '反代服务器地址'
+  'biliblili.uk': 'example.com',
+};
+
+const JP_COLOS = ['NRT', 'KIX', 'FUK', 'OKA'];
+
+export default {
+  async fetch(request, env, ctx) {
+    const workerUrl = new URL(request.url);
+
+    // --- 1. 根路径 ---
+    if (workerUrl.pathname === '/') {
+      const clientIp = request.headers.get('cf-connecting-ip') || '未知';
+      const region = request.cf?.country || '未知';
+      const colo = request.cf?.colo || '未知';
+      return new Response(`Success\nIP: ${clientIp}\n地区: ${region}\n边缘节点: ${colo}`, { status: 200 });
+    }
+
+
+    // --- 3. 解析目标 URL ---
+    let upstreamUrl;
+    try {
+        let path = workerUrl.pathname.substring(1);
+        path = path.replace(/^(https?)\/(?!\/)/, '$1://');
+        if (!path.startsWith('http')) {
+            path = 'https://' + path;
+        }
+        upstreamUrl = new URL(path);
+        upstreamUrl.search = workerUrl.search;
+    } catch (e) {
+      return new Response('Invalid URL', { status: 400 });
+    }
+
+
+// [优化] --- 判断是否需要走美西 ---
+
+
+    // 1.流量不是来自日本，直接跳过，根本不用浪费 CPU 去算域名后缀
+    const currentEdgeColo = request.cf?.colo;
+
+    if (currentEdgeColo && JP_COLOS.includes(currentEdgeColo)) {
+        
+
+        const originalHost = upstreamUrl.host; 
+        
+        for (const domainSuffix in DOMAIN_PROXY_RULES) {
+            if (originalHost.endsWith(domainSuffix)) {
+                upstreamUrl.hostname = DOMAIN_PROXY_RULES[domainSuffix];
+                break; 
+            }
+        }
+    }
+    // [结束] --- 判断是否需要走美西 ---
+
+    // [新增] --- 统计逻辑开始 ---
+    // 这里的 upstreamUrl.pathname 才是 Emby 的真实 API 路径
+    // 使用 ctx.waitUntil 确保不阻塞后续的反代请求
+    if (upstreamUrl.pathname.endsWith('/Sessions/Playing')) {
+        ctx.waitUntil(recordStats(env, 'playing'));
+    } else if (upstreamUrl.pathname.includes('/PlaybackInfo')) {
+        ctx.waitUntil(recordStats(env, 'playback_info'));
+    }
+    // [新增] --- 统计逻辑结束 ---
+
+    // --- 4. WebSocket ---
+    const upgradeHeader = request.headers.get('Upgrade');
+    if (upgradeHeader && upgradeHeader.toLowerCase() === 'websocket') {
+      return fetch(upstreamUrl.toString(), request);
+    }
+
+    // --- 5. 构造请求头 ---
+    const upstreamRequestHeaders = new Headers(request.headers);
+    upstreamRequestHeaders.set('Host', upstreamUrl.host);
+    upstreamRequestHeaders.delete('Referer'); 
+    
+    const clientIp = request.headers.get('cf-connecting-ip');
+    if (clientIp) {
+        upstreamRequestHeaders.set('x-forwarded-for', clientIp);
+        upstreamRequestHeaders.set('x-real-ip', clientIp);
+    }
+
+    const upstreamRequest = new Request(upstreamUrl.toString(), {
+      method: request.method,
+      headers: upstreamRequestHeaders,
+      body: request.body,
+      redirect: 'manual', // 禁止自动跟随，手动处理
+    });
+
+    // --- 6. 发起请求 ---
+    const upstreamResponse = await fetch(upstreamRequest);
+
+    // --- 7. 处理重定向 (核心修复区域) ---
+    const location = upstreamResponse.headers.get('Location');
+    if (location && upstreamResponse.status >= 300 && upstreamResponse.status < 400) {
+      try {
+        // [修复 1]: 处理相对路径重定向，基于 upstreamUrl 补全
+        const redirectUrl = new URL(location, upstreamUrl);
+        
+        // 策略 A: 白名单直连
+        if (MANUAL_REDIRECT_DOMAINS.some(domain => redirectUrl.hostname.endsWith(domain))) {
+          // [优化]: 确保返回给客户端的是绝对路径，防止客户端在 Worker 域名下跳转
+          const responseHeaders = new Headers(upstreamResponse.headers);
+          responseHeaders.set('Location', redirectUrl.toString());
+          return new Response(upstreamResponse.body, {
+            status: upstreamResponse.status,
+            statusText: upstreamResponse.statusText,
+            headers: responseHeaders
+          });
+        }
+        
+        // 策略 B: Worker 内部代理跟随
+        const followHeaders = new Headers(upstreamRequestHeaders);
+        // [修复 2]: 更新 Host 头
+        followHeaders.set('Host', redirectUrl.host);
+        
+        // [修复 3]: 使用完整的绝对 URL 发起 fetch
+        return fetch(redirectUrl.toString(), {
+            method: request.method,
+            headers: followHeaders,
+            body: request.body,
+            redirect: 'follow'
+        });
+
+      } catch (e) {
+        return upstreamResponse;
+      }
+    }
+
+    // --- 8. 处理常规响应 ---
+    const responseHeaders = new Headers(upstreamResponse.headers);
+    responseHeaders.set('Access-Control-Allow-Origin', '*');
+    responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    responseHeaders.set('Access-Control-Allow-Headers', '*');
+    responseHeaders.delete('Content-Security-Policy');
+    responseHeaders.delete('X-Frame-Options');
+
+    return new Response(upstreamResponse.body, {
+      status: upstreamResponse.status,
+      statusText: upstreamResponse.statusText,
+      headers: responseHeaders,
+    });
+  },
+};
+
+// [新增] --- 统计工具函数 ---
+async function recordStats(env, type) {
+    try {
+        // 使用 Asia/Shanghai 时区生成日期字符串 (YYYY-MM-DD)
+        const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+
+        // 检查 DB 是否绑定
+        if (!env.DB) {
+            console.error("D1 数据库未绑定，变量名需为 'DB'");
+            return;
+        }
+
+        let query = "";
+        let params = [];
+
+        if (type === 'playing') {
+            // 记录播放次数
+            query = `
+                INSERT INTO auto_emby_daily_stats (date, playing_count, playback_info_count) 
+                VALUES (?, 1, 0) 
+                ON CONFLICT(date) DO UPDATE SET playing_count = playing_count + 1
+            `;
+            params = [today];
+        } else if (type === 'playback_info') {
+            // 记录获取链接次数
+            query = `
+                INSERT INTO auto_emby_daily_stats (date, playing_count, playback_info_count) 
+                VALUES (?, 0, 1) 
+                ON CONFLICT(date) DO UPDATE SET playback_info_count = playback_info_count + 1
+            `;
+            params = [today];
+        }
+
+        if (query) {
+            await env.DB.prepare(query).bind(...params).run();
+        }
+
+    } catch (e) {
+        console.error('统计写入失败:', e);
+    }
+}
